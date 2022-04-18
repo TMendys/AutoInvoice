@@ -2,7 +2,7 @@ using System.Text;
 
 namespace AutoInvoice;
 
-static class ExtensionMethods
+internal static class ExtensionMethods
 {
     internal static object IfSeason(this object obj, object obj2)
     {
@@ -24,6 +24,7 @@ static class ExtensionMethods
 
         return 0;
     }
+
     internal static int Month(this string letter) => letter switch
     {
         "F" => 2,
@@ -34,9 +35,12 @@ static class ExtensionMethods
         "N" => 11,
         _ => throw new ArgumentException("Månaden existerar inte som ett val.")
     };
+
     internal static bool IsEmpty(this object obj) => String.IsNullOrEmpty(obj.ToString());
+
     internal static bool IsEmpty(this object obj, out string? output) =>
         String.IsNullOrEmpty(output = obj.ToString());
+
     internal static bool IsNumber(this object obj)
     {
         try
@@ -49,10 +53,14 @@ static class ExtensionMethods
             return false;
         }
     }
+
     internal static decimal ExcludeVat(this decimal includeVat, bool isBuisness) =>
         isBuisness ? (includeVat * 0.8M) : includeVat;
+
     internal static bool IsTrue(this object obj) => Boolean.Parse(obj.ToString() ?? "false");
+
     internal static bool IsFalse(this object obj) => !Boolean.Parse(obj.ToString() ?? "false");
+
     internal static DateOnly ToDate(this object dayNumber)
     {
         var date = DateTime.Today;
@@ -62,6 +70,7 @@ static class ExtensionMethods
         }
         return DateOnly.FromDateTime(date);
     }
+
     internal static int ToHours(this object obj)
     {
         if (obj.IsEmpty(out string? time))
@@ -83,6 +92,7 @@ static class ExtensionMethods
         int total = hours + minutes;
         return total == 0 ? 1 : total;
     }
+
     internal static decimal ToDecimal(this object obj, bool removeNegatives = false)
     {
         var cellText = obj.ToString();
@@ -109,9 +119,11 @@ static class ExtensionMethods
         if (sb.Length == 0) return 0;
         return Decimal.Parse(sb.ToString());
     }
+
     internal static decimal ToDecimal(
         this (object T1, object T2) obj, bool removeNegatives = false) =>
         obj.T1.ToDecimal(removeNegatives) + obj.T2.ToDecimal(removeNegatives);
+
     internal static decimal ToDecimal(
         this (object T1, object T2, object T3) obj, bool removeNegatives = false) =>
         obj.T1.ToDecimal(removeNegatives) + obj.T2.ToDecimal(removeNegatives) + obj.T3.ToDecimal(removeNegatives);

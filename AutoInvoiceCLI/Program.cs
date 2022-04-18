@@ -10,14 +10,19 @@ IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
 
+// Fetch customers from a Google sheet and save it to a cvs file 
+// to be used to automate sending invoice.
 var rootCommand = new RootCommand("Hämtar kunder som ska faktureras från Google kalkylblad för att sedan skicka dem via Visma Eekonomi.");
 
+// Fetch the customers
 var fetchCommand = new Command("hämta", "Skapa ny csv-fil.");
 fetchCommand.AddAlias("fetch");
 
+// Mark the customers that have been invoiced in the Google sheet.
 var invoicedCommand = new Command("fakturerat", "Bocka i kundlistan med alla kunder som är fakturerade.");
 invoicedCommand.AddAlias("invoiced");
 
+// What tab to fetch or mark on
 var tabArgument = new Argument<string?>();
 tabArgument.Description = "Vilken flik som ska hämtas";
 
@@ -27,9 +32,10 @@ rootCommand.Add(fetchCommand);
 rootCommand.Add(invoicedCommand);
 
 // GET
+// Fetch customers to invoice
 fetchCommand.SetHandler((string tab) =>
 {
-    var resource = new GoogleSheetsHelper().Service.Spreadsheets.Values;
+    var resource = new GoogleSheetsService().Service.Spreadsheets.Values;
     var range = $"{tab}!A3:V";
     var id = config.GetRequiredSection("SpreadsheetId").Value;
     var response = resource.Get(id, range).Execute();
@@ -48,9 +54,10 @@ fetchCommand.SetHandler((string tab) =>
 }, tabArgument);
 
 // PUT
+// Mark invoiced customers on Google sheet
 invoicedCommand.SetHandler((string tab) =>
 {
-    var resource = new GoogleSheetsHelper().Service.Spreadsheets.Values;
+    var resource = new GoogleSheetsService().Service.Spreadsheets.Values;
     var range = $"{tab}!A3:V";
     var id = config.GetRequiredSection("SpreadsheetId").Value;
     var response = resource.Get(id, range).Execute();

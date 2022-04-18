@@ -4,13 +4,13 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Util.Store;
 
 namespace AutoInvoice;
-public class GoogleSheetsHelper
+public class GoogleSheetsService
 {
     static readonly string[] Scopes = { SheetsService.Scope.Spreadsheets };
     const string ApplicationName = "AutoInvoice";
     public SheetsService Service { get; }
 
-    public GoogleSheetsHelper()
+    public GoogleSheetsService()
     {
         using var stream = new FileStream(
             "credentials.json", FileMode.Open, FileAccess.Read);

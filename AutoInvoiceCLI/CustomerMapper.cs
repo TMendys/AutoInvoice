@@ -37,6 +37,9 @@ public static class CustomerMapper
 
         return customers;
     }
+
+    // Read all lines from the cvs file and match it to the customers that have been invoiced. 
+    // All invoiced customers will be marked as invoiced.
     public static IList<IList<object>> SetInvoicedToTrueRangeData(IList<IList<object>> values)
     {
         Queue<string> customerNumbers = new();
@@ -57,6 +60,7 @@ public static class CustomerMapper
         {
             if (row[0].ToString() == customerNumbers.Peek())
             {
+                // Mark invoiced as true
                 row[4] = "TRUE";
                 var number = customerNumbers.Dequeue();
                 Console.WriteLine($"{number}");
