@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/AutoInvoice/bin/Debug/net6.0/AutoInvoice.dll",
+            "program": "${workspaceFolder}/AutoInvoiceCLI/bin/Debug/net6.0/AutoInvoiceCLI.dll",
             "args": "hämta Beställningar",
-            "cwd": "${workspaceFolder}/AutoInvoice",
+            "cwd": "${workspaceFolder}/AutoInvoiceCLI",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
             "stopAtEntry": false

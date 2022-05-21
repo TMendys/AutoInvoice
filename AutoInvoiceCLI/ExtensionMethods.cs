@@ -36,23 +36,10 @@ internal static class ExtensionMethods
         _ => throw new ArgumentException("Månaden existerar inte som ett val.")
     };
 
-    internal static bool IsEmpty(this object obj) => String.IsNullOrEmpty(obj.ToString());
+    internal static bool IsEmpty(this object obj) => String.IsNullOrWhiteSpace(obj.ToString());
 
     internal static bool IsEmpty(this object obj, out string? output) =>
-        String.IsNullOrEmpty(output = obj.ToString());
-
-    internal static bool IsNumber(this object obj)
-    {
-        try
-        {
-            Int32.Parse(obj.ToString()!);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
+        String.IsNullOrWhiteSpace(output = obj.ToString());
 
     internal static decimal ExcludeVat(this decimal includeVat, bool isBuisness) =>
         isBuisness ? (includeVat * 0.8M) : includeVat;
@@ -63,6 +50,19 @@ internal static class ExtensionMethods
 
     internal static DateOnly ToDate(this object dayNumber)
     {
+        var dateArray = dayNumber?.ToString()?.Split('/');
+
+        if (dateArray?.Length == 2)
+        {
+            DateOnly newDate =
+                new(DateTime.Now.Year,
+                Convert.ToInt32(dateArray[1]),
+                Convert.ToInt32(dateArray[0]));
+
+            // Before returning the date, check if the date is in the future, if true then reduce one year.
+            return newDate > DateOnly.FromDateTime(DateTime.Now) ? newDate.AddYears(-1) : newDate;
+        }
+
         var date = DateTime.Today;
         while (date.Day != Convert.ToInt32(dayNumber))
         {
@@ -130,6 +130,7 @@ internal static class ExtensionMethods
 
     internal static IEnumerable<IList<object>> ToInvoice(this IList<IList<object>> values) =>
         values.Where(x => !x[0].IsEmpty()
-        && x[3].IsNumber()
+        && !x[3].IsEmpty()
+        && Char.IsDigit(x[3].ToString()[0])
         && x[4].IsFalse());
 }

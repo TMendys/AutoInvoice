@@ -28,7 +28,7 @@ public static class CustomerMapper
                 ServiceCost: (row[8], row[19]).ToDecimal().ExcludeVat(isBuisness),
                 DrivingCost: row[9].ToDecimal().ExcludeVat(isBuisness),
                 Discount: haveDiscount ? discount : 0,
-                TotalTimeInHours: row[20].IsEmpty() ? row[10].ToHours() : row[20].ToHours(),
+                TotalTimeInHours: row[20].IsEmpty() ? row[10].ToHours() : row[20].ToHours(), // TODO Add time from season work
                 Comments: row[15].ToString()
             );
 
@@ -73,7 +73,7 @@ public static class CustomerMapper
 
     public static void PrintCustermers(List<Customer> customers)
     {
-        Console.WriteLine($"{"Kund",4} {"Datum",10} | {"Pren.",8} | {"Arbe.",8} | {"Serv.",5} | {"Körn.",6} | {"Rabatt"} | {"Tid",3} | {"Not."}");
+        Console.WriteLine($"{"Kund",4} {"Datum",10} | {"Pren.",8} | {"Arbe.",8} | {"Serv.",5} | {"Körn.",6} | {"Rabatt"} | {"Tid",3} | {"Kommentar"}");
         foreach (var customer in customers)
         {
             Console.WriteLine($"{customer.CustomerNumber,4} {customer.Date} | {customer.SubscriptionCost,8:C0} | {customer.LaborCost,8:C0} | {customer.ServiceCost,5:C0} | {customer.DrivingCost,6:C0} | {customer.Discount,6} | {customer.TotalTimeInHours,3} | {customer.Comments}");
