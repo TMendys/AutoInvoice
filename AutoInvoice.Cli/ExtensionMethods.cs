@@ -1,4 +1,4 @@
-namespace AutoInvoiceCLI;
+namespace AutoInvoice.Cli;
 public static class ExtensionMethods
 {
     internal static IEnumerable<IList<object>> ToInvoice(this IList<IList<object>> values) =>

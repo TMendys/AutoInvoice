@@ -1,8 +1,8 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using Googlesheets.Api;
-using AutoInvoiceCLI;
+using AutoInvoice.Google.Api;
+using AutoInvoice.Cli;
 using AutoInvoice.Models;
 
 // How the sheet is builed
@@ -35,8 +35,8 @@ rootCommand.Add(invoicedCommand);
 // Fetch customers to invoice
 fetchCommand.SetHandler((string tab) =>
 {
-    Googlesheets.Api.Googlesheets sheet = new(tab);
-    var customers = Googlesheets.Api.Googlesheets.ReadData(sheet.Values.ToInvoice());
+    Googlesheets sheet = new(tab);
+    var customers = Googlesheets.ReadData(sheet.Values.ToInvoice());
     if (customers is not null)
     {
         CustomerMapper.PrintCustermers(customers);
@@ -48,7 +48,7 @@ fetchCommand.SetHandler((string tab) =>
 // Mark invoiced customers on Google sheet
 invoicedCommand.SetHandler((string tab) =>
 {
-    Googlesheets.Api.Googlesheets sheet = new(tab);
+    Googlesheets sheet = new(tab);
     sheet.UpdateData(CustomerMapper.SetInvoicedToTrueRangeData(sheet.Values));
 }, tabArgument);
 

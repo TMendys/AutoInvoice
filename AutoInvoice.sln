@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoiceCLI", "AutoInvoiceCLI\AutoInvoiceCLI.csproj", "{5F0EC283-0C1E-4B43-B03E-2E9CB728649D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Cli", "AutoInvoice.Cli\AutoInvoice.Cli.csproj", "{5F0EC283-0C1E-4B43-B03E-2E9CB728649D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Googlesheets.Api", "Googlesheets.Api\Googlesheets.Api.csproj", "{06EA1687-CE48-4F13-B3C2-24F2DE7E19F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Google.Api", "AutoInvoice.Google.Api\AutoInvoice.Google.Api.csproj", "{06EA1687-CE48-4F13-B3C2-24F2DE7E19F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Models", "AutoInvoice.Models\AutoInvoice.Models.csproj", "{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +26,9 @@ Global
 		{06EA1687-CE48-4F13-B3C2-24F2DE7E19F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06EA1687-CE48-4F13-B3C2-24F2DE7E19F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06EA1687-CE48-4F13-B3C2-24F2DE7E19F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

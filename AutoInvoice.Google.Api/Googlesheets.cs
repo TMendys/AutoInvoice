@@ -1,9 +1,10 @@
-﻿using Googlesheets.Service;
+﻿using AutoInvoice.Google.Api.Service;
 using AutoInvoice.Models;
 using Microsoft.Extensions.Configuration;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
-namespace Googlesheets.Api;
+
+namespace AutoInvoice.Google.Api;
 public class Googlesheets
 {
     readonly SpreadsheetsResource.ValuesResource resource = new GoogleSheetsService().Service.Spreadsheets.Values;
