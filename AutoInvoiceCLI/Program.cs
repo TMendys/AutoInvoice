@@ -1,17 +1,11 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using Microsoft.Extensions.Configuration;
-using Google.Apis.Sheets.v4;
-using Google.Apis.Sheets.v4.Data;
-using AutoInvoice;
+using Googlesheets.Api;
+using AutoInvoiceCLI;
 
 // How the sheet is builed
 // Kundnr	Mailfaktura	Putsare	Datum	Fakturerad	Namn	Sms	Pris	Service	Framkörning	Tid	Altan	Pris	Tid	Extra	Kommentarer	Företag	Ins.	Pris	Service	Tid Total	Spröjs (Avtagbara)	Källare	Övervåning	Adress	Stad/Stadsdel	Tel.	Tel. 2	E-post
-
-IConfiguration config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
 
 // Fetch customers from a Google sheet and save it to a cvs file 
 // to be used to automate sending invoice.
@@ -26,8 +20,10 @@ var invoicedCommand = new Command("fakturerat", "Bocka i kundlistan med alla kun
 invoicedCommand.AddAlias("invoiced");
 
 // What tab to fetch or mark on
-var tabArgument = new Argument<string?>();
-tabArgument.Description = "Vilken flik som ska hämtas";
+var tabArgument = new Argument<string?>
+{
+    Description = "Vilken flik som ska hämtas"
+};
 
 fetchCommand.AddArgument(tabArgument);
 invoicedCommand.AddArgument(tabArgument);
@@ -38,21 +34,12 @@ rootCommand.Add(invoicedCommand);
 // Fetch customers to invoice
 fetchCommand.SetHandler((string tab) =>
 {
-    var resource = new GoogleSheetsService().Service.Spreadsheets.Values;
-    var range = $"{tab}!A3:V";
-    var id = config.GetRequiredSection("SpreadsheetId").Value;
-    var response = resource.Get(id, range).Execute();
-
-    var values = response.Values.ToInvoice();
-    if (values != null && values.Any())
+    Googlesheets.Api.Googlesheets sheet = new(tab);
+    var customers = sheet.ReadData(sheet.Values.ToInvoice());
+    if (customers is not null)
     {
-        var customers = CustomerMapper.MapFromRangeData(values);
         CustomerMapper.PrintCustermers(customers);
         CustomerMapper.CreateCsvFile(customers);
-    }
-    else
-    {
-        Console.WriteLine("No data found.");
     }
 }, tabArgument);
 
@@ -60,21 +47,12 @@ fetchCommand.SetHandler((string tab) =>
 // Mark invoiced customers on Google sheet
 invoicedCommand.SetHandler((string tab) =>
 {
-    var resource = new GoogleSheetsService().Service.Spreadsheets.Values;
-    var range = $"{tab}!A3:V";
-    var id = config.GetRequiredSection("SpreadsheetId").Value;
-    var response = resource.Get(id, range).Execute();
-    var values = response.Values;
-
-    var valueRange = new ValueRange
+    Googlesheets.Api.Googlesheets sheet = new(tab);
+    var valueRange = new Google.Apis.Sheets.v4.Data.ValueRange
     {
-        Values = CustomerMapper.SetInvoicedToTrueRangeData(values)
+        Values = CustomerMapper.SetInvoicedToTrueRangeData(sheet.Values)
     };
-
-    var updateRequest = resource.Update(valueRange, id, range);
-    updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource
-        .UpdateRequest.ValueInputOptionEnum.USERENTERED;
-    updateRequest.Execute();
+    sheet.UpdateData();
 }, tabArgument);
 
 return await new CommandLineBuilder(rootCommand)

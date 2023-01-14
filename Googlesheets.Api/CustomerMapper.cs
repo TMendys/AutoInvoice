@@ -1,6 +1,8 @@
 using System.Text;
+using Googlesheets.Models;
 
-namespace AutoInvoice;
+namespace Googlesheets.Api;
+
 public static class CustomerMapper
 {
     public static List<Customer> MapFromRangeData(IEnumerable<IList<object>> values)
@@ -17,7 +19,7 @@ public static class CustomerMapper
             Customer customer = new
             (
                 CustomerNumber: row[0].ToString()!,
-                Email: row[1].IsTrue(),
+                Billing_Method: row[1].ToString()!,
                 Date: row[3].ToDate(),
                 SubscriptionCost: isSupscriber ?
                     (row[7], row[12].IfSeason(row[11])).ToDecimal().ExcludeVat(isBuisness) : 0,
