@@ -2,7 +2,6 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using AutoInvoice.Google.Api;
-using AutoInvoice.Cli;
 using AutoInvoice.Models;
 
 // How the sheet is builed
@@ -36,7 +35,8 @@ rootCommand.Add(invoicedCommand);
 fetchCommand.SetHandler((string tab) =>
 {
     Googlesheets sheet = new(tab);
-    var customers = Googlesheets.ReadData(sheet.Values.ToInvoice());
+    var toInvoice = CustomerMapper.ToInvoice(sheet.Values);
+    var customers = Googlesheets.ReadData(toInvoice);
     if (customers is not null)
     {
         CustomerMapper.PrintCustermers(customers);

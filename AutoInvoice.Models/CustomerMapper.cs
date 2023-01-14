@@ -91,4 +91,9 @@ public static class CustomerMapper
         string path = Path.Combine(Environment.CurrentDirectory, "Serialization.csv");
         File.WriteAllText(path, csv);
     }
+
+    public static IEnumerable<IList<object>> ToInvoice(IList<IList<object>> values)
+    {
+        return values.ToInvoice();
+    }
 }
