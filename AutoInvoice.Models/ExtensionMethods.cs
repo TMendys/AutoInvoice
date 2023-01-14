@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Googlesheets.Api;
+namespace AutoInvoice.Models;
 
 internal static class ExtensionMethods
 {

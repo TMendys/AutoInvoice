@@ -1,4 +1,4 @@
-namespace Googlesheets.Models;
+namespace AutoInvoice.Models;
 
 public record Customer(
     string CustomerNumber,

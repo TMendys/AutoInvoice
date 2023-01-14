@@ -18,4 +18,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AutoInvoice.Models\AutoInvoice.Models.csproj" />
+  </ItemGroup>
+
 </Project>

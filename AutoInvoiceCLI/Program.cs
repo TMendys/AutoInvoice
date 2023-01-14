@@ -3,6 +3,7 @@ using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using Googlesheets.Api;
 using AutoInvoiceCLI;
+using AutoInvoice.Models;
 
 // How the sheet is builed
 // Kundnr	Mailfaktura	Putsare	Datum	Fakturerad	Namn	Sms	Pris	Service	Framkörning	Tid	Altan	Pris	Tid	Extra	Kommentarer	Företag	Ins.	Pris	Service	Tid Total	Spröjs (Avtagbara)	Källare	Övervåning	Adress	Stad/Stadsdel	Tel.	Tel. 2	E-post
@@ -35,7 +36,7 @@ rootCommand.Add(invoicedCommand);
 fetchCommand.SetHandler((string tab) =>
 {
     Googlesheets.Api.Googlesheets sheet = new(tab);
-    var customers = sheet.ReadData(sheet.Values.ToInvoice());
+    var customers = Googlesheets.Api.Googlesheets.ReadData(sheet.Values.ToInvoice());
     if (customers is not null)
     {
         CustomerMapper.PrintCustermers(customers);
@@ -48,11 +49,7 @@ fetchCommand.SetHandler((string tab) =>
 invoicedCommand.SetHandler((string tab) =>
 {
     Googlesheets.Api.Googlesheets sheet = new(tab);
-    var valueRange = new Google.Apis.Sheets.v4.Data.ValueRange
-    {
-        Values = CustomerMapper.SetInvoicedToTrueRangeData(sheet.Values)
-    };
-    sheet.UpdateData();
+    sheet.UpdateData(CustomerMapper.SetInvoicedToTrueRangeData(sheet.Values));
 }, tabArgument);
 
 return await new CommandLineBuilder(rootCommand)

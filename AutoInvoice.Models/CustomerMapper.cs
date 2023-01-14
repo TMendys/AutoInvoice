@@ -1,7 +1,6 @@
 using System.Text;
-using Googlesheets.Models;
 
-namespace Googlesheets.Api;
+namespace AutoInvoice.Models;
 
 public static class CustomerMapper
 {

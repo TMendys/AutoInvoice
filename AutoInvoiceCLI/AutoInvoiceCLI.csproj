@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Googlesheets.Api\Googlesheets.Api.csproj" />
+    <ProjectReference Include="..\AutoInvoice.Models\AutoInvoice.Models.csproj" />
   </ItemGroup>
 
 </Project>
