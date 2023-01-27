@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +31,6 @@ builder.Services.AddAuthentication("cookie")
         o.Scope.Add("ea:api");
         o.Scope.Add("ea:sales");
         o.Scope.Add("offline_access");
-        o.SaveTokens = false;
 
         o.Events.OnCreatingTicket = async context =>
         {
