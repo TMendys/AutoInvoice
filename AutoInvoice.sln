@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Google.Api", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Models", "AutoInvoice.Models\AutoInvoice.Models.csproj", "{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Api", "AutoInvoice.Api\AutoInvoice.Api.csproj", "{1D2375DB-E64E-4670-B2DC-409A10E3D5F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,13 @@ Global
 		{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2DABA28-FE19-4D17-AFDF-5263FAFFDEAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B834D3C-3FA2-48F6-8204-E67E74752843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B834D3C-3FA2-48F6-8204-E67E74752843}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B834D3C-3FA2-48F6-8204-E67E74752843}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B834D3C-3FA2-48F6-8204-E67E74752843}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D2375DB-E64E-4670-B2DC-409A10E3D5F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2375DB-E64E-4670-B2DC-409A10E3D5F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D2375DB-E64E-4670-B2DC-409A10E3D5F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D2375DB-E64E-4670-B2DC-409A10E3D5F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

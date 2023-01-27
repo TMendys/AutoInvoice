@@ -25,10 +25,18 @@ var tabArgument = new Argument<string?>
     Description = "Vilken flik som ska hämtas"
 };
 
+var vismaCommand = new Command("visma");
+
 fetchCommand.AddArgument(tabArgument);
 invoicedCommand.AddArgument(tabArgument);
 rootCommand.Add(fetchCommand);
 rootCommand.Add(invoicedCommand);
+rootCommand.Add(vismaCommand);
+
+vismaCommand.SetHandler(async () =>
+{
+
+});
 
 // GET
 // Fetch customers to invoice

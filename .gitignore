@@ -458,4 +458,5 @@ token.json
 token.json/*
 credentials.json
 appsettings.json
+appsettings.Development.json
 *.csv
