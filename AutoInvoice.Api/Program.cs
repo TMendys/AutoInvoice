@@ -46,7 +46,11 @@ builder.Services.AddAuthentication("cookie")
             }
             var cp = authResult.Principal;
             var userId = cp.FindFirstValue("user_id");
-            db[userId] = context.AccessToken;
+            db[userId] = new TokenInfo(
+                context.AccessToken,
+                context.RefreshToken,
+                DateTime.Now.AddSeconds(int.Parse(context.TokenResponse.ExpiresIn))
+            );
 
             context.Principal = cp.Clone();
             var identity = context.Principal.Identities.First(x => x.AuthenticationType == "cookie");
@@ -106,7 +110,9 @@ app.MapGet("/visma/customers",
 app.Run();
 
 // In memory database for testing
-public class Database : Dictionary<string, string> { }
+public class Database : Dictionary<string, TokenInfo> { }
+
+public record class TokenInfo(string? AccessToken, string? RefreshToken, DateTime? ExpiresIn);
 
 public class VismaTokenClaimsTransformation : IClaimsTransformation
 {
@@ -125,7 +131,7 @@ public class VismaTokenClaimsTransformation : IClaimsTransformation
         }
 
         var cp = principal.Clone();
-        var accessToken = db[userId];
+        var accessToken = db[userId].AccessToken;
 
         var identity = cp.Identities.First(x => x.AuthenticationType == "cookie");
         identity.AddClaim(new Claim("visma_access_token", accessToken));
