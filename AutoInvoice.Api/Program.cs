@@ -28,6 +28,7 @@ builder.Services.AddAuthentication("cookie")
         o.AuthorizationEndpoint = "https://identity-sandbox.test.vismaonline.com/connect/authorize";
         o.TokenEndpoint = "https://identity-sandbox.test.vismaonline.com/connect/token";
         o.CallbackPath = "/callback";
+        // o.SaveTokens = true;
         o.Scope.Add("ea:api");
         o.Scope.Add("ea:sales");
         o.Scope.Add("offline_access");
@@ -35,26 +36,32 @@ builder.Services.AddAuthentication("cookie")
         o.Events.OnCreatingTicket = async context =>
         {
             var db = context.HttpContext.RequestServices.GetRequiredService<Database>();
+
             var authHandlerProvider =
                 context.HttpContext.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>();
-            var handler = await authHandlerProvider.GetHandlerAsync(context.HttpContext, "cookie");
-            var authResult = await handler.AuthenticateAsync();
+
+            var handler = await authHandlerProvider
+                .GetHandlerAsync(context.HttpContext, "cookie");
+
+            var authResult = await handler?.AuthenticateAsync()!;
             if (!authResult.Succeeded)
             {
                 context.Fail("failed authentication");
                 return;
             }
-            var cp = authResult.Principal;
-            var userId = cp.FindFirstValue("user_id");
+
+            var claimsPrincipal = authResult.Principal;
+            var userId = claimsPrincipal.FindFirstValue("user_id");
             db[userId] = new TokenInfo(
                 context.AccessToken,
                 context.RefreshToken,
                 DateTime.Now.AddSeconds(int.Parse(context.TokenResponse.ExpiresIn))
             );
 
-            context.Principal = cp.Clone();
-            var identity = context.Principal.Identities.First(x => x.AuthenticationType == "cookie");
-            identity.AddClaim(new Claim("visma-token", "y"));
+            context.Principal = claimsPrincipal.Clone();
+            var identity = context.Principal.Identities
+                .First(x => x.AuthenticationType == "cookie");
+            identity.AddClaim(new Claim("visma-token", "true"));
         };
     });
 
@@ -63,11 +70,13 @@ builder.Services.AddAuthorization(b =>
     b.AddPolicy("visma-enabled", pb =>
     {
         pb.AddAuthenticationSchemes("cookie")
-            .RequireClaim("visma-token", "y")
+            .RequireClaim("visma-token", "true")
             .RequireAuthenticatedUser();
     });
 });
-builder.Services.AddSingleton<Database>()
+
+builder.Services
+    .AddSingleton<Database>()
     .AddTransient<IClaimsTransformation, VismaTokenClaimsTransformation>();
 builder.Services.AddHttpClient();
 
@@ -88,7 +97,7 @@ app.MapGet("/login", () =>
             new[] { new Claim("user_id", Guid.NewGuid().ToString()) }, "cookie")
     );
 
-    //AuthenticationProperties
+    //Add AuthenticationProperties if needed later
 
     return Results.SignIn(userPrincipal, authenticationScheme: "cookie");
 });
@@ -112,7 +121,7 @@ app.Run();
 // In memory database for testing
 public class Database : Dictionary<string, TokenInfo> { }
 
-public record class TokenInfo(string? AccessToken, string? RefreshToken, DateTime? ExpiresIn);
+public record class TokenInfo(string AccessToken, string RefreshToken, DateTime Expires);
 
 public class VismaTokenClaimsTransformation : IClaimsTransformation
 {
@@ -130,12 +139,16 @@ public class VismaTokenClaimsTransformation : IClaimsTransformation
             return Task.FromResult(principal);
         }
 
-        var cp = principal.Clone();
+        var principalClone = principal.Clone();
         var accessToken = db[userId].AccessToken;
+        var refreshToken = db[userId].RefreshToken;
+        var expires = db[userId].Expires.ToString();
 
-        var identity = cp.Identities.First(x => x.AuthenticationType == "cookie");
+        var identity = principalClone.Identities.First(x => x.AuthenticationType == "cookie");
         identity.AddClaim(new Claim("visma_access_token", accessToken));
+        identity.AddClaim(new Claim("visma_refresh_token", refreshToken));
+        identity.AddClaim(new Claim("visma_token_expires", expires));
 
-        return Task.FromResult(cp);
+        return Task.FromResult(principalClone);
     }
 }
