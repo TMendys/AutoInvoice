@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.13" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
   </ItemGroup>
 
@@ -23,7 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AutoInvoice.Google.Api\AutoInvoice.Google.Api.csproj" />
     <ProjectReference Include="..\AutoInvoice.Models\AutoInvoice.Models.csproj" />
-    <ProjectReference Include="..\AutoInvoice.Visma_eAccounting.Api\AutoInvoice.Visma_eAccounting.Api.csproj" />
   </ItemGroup>
 
 </Project>
