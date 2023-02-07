@@ -1,10 +1,13 @@
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication("cookie")
+builder.Services.AddAuthentication("jwt")
     .AddCookie("cookie", o =>
     {
         o.LoginPath = "/login";
@@ -19,9 +22,34 @@ builder.Services.AddAuthentication("cookie")
             return del(context);
         };
     })
+    .AddJwtBearer("jwt", o =>
+    {
+        // // var del = o.Events.OnForbidden;
+        // o.Events.OnForbidden = context =>
+        // {
+        //     if (context.Request.Path.StartsWithSegments("/visma"))
+        //     {
+        //         return context.HttpContext.ChallengeAsync("visma");
+        //     }
+        //     return Task.CompletedTask;
+        //     // return del(context);
+        // };
+        o.RequireHttpsMetadata = false;
+        o.SaveToken = true;
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = false,
+            ValidateIssuerSigningKey = true
+        };
+    })
     .AddOAuth("visma", o =>
     {
-        o.SignInScheme = "cookie";
+        o.SignInScheme = "jwt";
         o.ClientId = builder.Configuration["Auth0:ClientId"];
         o.ClientSecret = builder.Configuration["Auth0:ClientSecret"];
 
@@ -41,7 +69,7 @@ builder.Services.AddAuthentication("cookie")
                 context.HttpContext.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>();
 
             var handler = await authHandlerProvider
-                .GetHandlerAsync(context.HttpContext, "cookie");
+                .GetHandlerAsync(context.HttpContext, "jwt");
 
             var authResult = await handler?.AuthenticateAsync()!;
             if (!authResult.Succeeded)
@@ -60,17 +88,22 @@ builder.Services.AddAuthentication("cookie")
 
             context.Principal = claimsPrincipal.Clone();
             var identity = context.Principal.Identities
-                .First(x => x.AuthenticationType == "cookie");
+                .First(x => x.AuthenticationType == "jwt");
             identity.AddClaim(new Claim("visma-token", "true"));
         };
     });
 
-builder.Services.AddAuthorization(b =>
+builder.Services.AddAuthorization(o =>
 {
-    b.AddPolicy("visma-enabled", pb =>
+    o.AddPolicy("visma-enabled", pb =>
     {
-        pb.AddAuthenticationSchemes("cookie")
+        pb.AddAuthenticationSchemes("jwt")
             .RequireClaim("visma-token", "true")
+            .RequireAuthenticatedUser();
+    });
+    o.AddPolicy("jwt-test", pb =>
+    {
+        pb.AddAuthenticationSchemes("jwt")
             .RequireAuthenticatedUser();
     });
 });
@@ -90,6 +123,30 @@ app.MapGet("/", (HttpContext context) =>
     return context.User.Claims.Select(x => new { x.Type, x.Value }).ToList();
 });
 
+app.MapGet("/jwt-test", (HttpContext context) =>
+{
+    return context.User.Claims.Select(x => new { x.Type, x.Value }).ToList();
+}).RequireAuthorization("jwt-test");
+
+app.MapGet("/jwt", (IConfiguration config) =>
+{
+    var handler = new JsonWebTokenHandler();
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+    var token = handler.CreateToken(new SecurityTokenDescriptor()
+    {
+        Issuer = config["Jwt:Issuer"],
+        Audience = config["Jwt:Audience"],
+        Subject = new ClaimsIdentity(new[]
+        {
+                new Claim("user_id", Guid.NewGuid().ToString()),
+        }),
+        SigningCredentials = new SigningCredentials(
+            key, SecurityAlgorithms.HmacSha256Signature)
+    });
+
+    return token;
+});
+
 app.MapGet("/login", () =>
 {
     var userPrincipal = new ClaimsPrincipal(
@@ -102,6 +159,12 @@ app.MapGet("/login", () =>
     return Results.SignIn(userPrincipal, authenticationScheme: "cookie");
 });
 
+app.MapGet("/visma", (HttpContext context, string token) =>
+{
+    // context.Request.Headers.Authorization;
+    return context.ChallengeAsync("visma");
+});
+
 app.MapGet("/visma/customers",
     async (IHttpClientFactory clientFactory,
     HttpContext context) =>
@@ -109,10 +172,10 @@ app.MapGet("/visma/customers",
     var accessToken = context.User.FindFirstValue("visma_access_token");
     var client = clientFactory.CreateClient();
 
-    using var req = new HttpRequestMessage(
+    using var request = new HttpRequestMessage(
         HttpMethod.Get, "https://eaccountingapi-sandbox.test.vismaonline.com/v2/customers");
-    req.Headers.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
-    using var response = await client.SendAsync(req);
+    request.Headers.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+    using var response = await client.SendAsync(request);
     return await response.Content.ReadAsStringAsync();
 }).RequireAuthorization("visma-enabled");
 
@@ -144,7 +207,7 @@ public class VismaTokenClaimsTransformation : IClaimsTransformation
         var refreshToken = db[userId].RefreshToken;
         var expires = db[userId].Expires.ToString();
 
-        var identity = principalClone.Identities.First(x => x.AuthenticationType == "cookie");
+        var identity = principalClone.Identities.First(x => x.AuthenticationType == "jwt");
         identity.AddClaim(new Claim("visma_access_token", accessToken));
         identity.AddClaim(new Claim("visma_refresh_token", refreshToken));
         identity.AddClaim(new Claim("visma_token_expires", expires));
