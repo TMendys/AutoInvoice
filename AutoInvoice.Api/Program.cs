@@ -166,11 +166,11 @@ app.MapGet("/visma", (HttpContext context, string token) =>
 });
 
 app.MapGet("/visma/customers",
-    async (IHttpClientFactory clientFactory,
+    async (IHttpClientFactory httpClientFactory,
     HttpContext context) =>
 {
     var accessToken = context.User.FindFirstValue("visma_access_token");
-    var client = clientFactory.CreateClient();
+    var client = httpClientFactory.CreateClient();
 
     using var request = new HttpRequestMessage(
         HttpMethod.Get, "https://eaccountingapi-sandbox.test.vismaonline.com/v2/customers");

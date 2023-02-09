@@ -1,8 +1,11 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using System.CommandLine.Hosting;
 using AutoInvoice.Google.Api;
 using AutoInvoice.Models;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 // How the sheet is builed
 // Kundnr	Mailfaktura	Putsare	Datum	Fakturerad	Namn	Sms	Pris	Service	Framkörning	Tid	Altan	Pris	Tid	Extra	Kommentarer	Företag	Ins.	Pris	Service	Tid Total	Spröjs (Avtagbara)	Källare	Övervåning	Adress	Stad/Stadsdel	Tel.	Tel. 2	E-post
@@ -33,9 +36,18 @@ rootCommand.Add(fetchCommand);
 rootCommand.Add(invoicedCommand);
 rootCommand.Add(vismaCommand);
 
-vismaCommand.SetHandler(async () =>
+vismaCommand.SetHandler(async (context) =>
 {
+    var host = context.GetHost();
+    var httpClientFactory = host.Services.GetRequiredService<IHttpClientFactory>();
+    // var httpClientFactory = context.BindingContext.GetRequiredService<IHttpClientFactory>();
+    var client = httpClientFactory.CreateClient();
 
+    using var request = new HttpRequestMessage(
+        HttpMethod.Get, "https://localhost:44300/jwt");
+    using var response = await client.SendAsync(request);
+    var readResponse = await response.Content.ReadAsStringAsync();
+    Console.WriteLine(readResponse);
 });
 
 // GET
@@ -61,6 +73,11 @@ invoicedCommand.SetHandler((string tab) =>
 }, tabArgument);
 
 return await new CommandLineBuilder(rootCommand)
+    .UseHost(_ => new HostBuilder(), (builder) => builder
+        .ConfigureServices((_, services) =>
+        {
+            services.AddHttpClient();
+        }))
     .UseDefaults()
     .Build()
     .InvokeAsync(args);

@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Api", "AutoInvoice.Api\AutoInvoice.Api.csproj", "{05C95E35-BF53-4A9D-9263-FAF055FBC559}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Cli", "AutoInvoice.Cli\AutoInvoice.Cli.csproj", "{3B68376E-F121-4A69-9722-49C4DC1B2CDE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Google.Api", "AutoInvoice.Google.Api\AutoInvoice.Google.Api.csproj", "{D2FC9AEE-6BD7-470F-AF5E-698C2EA2D94B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Models", "AutoInvoice.Models\AutoInvoice.Models.csproj", "{60E02D12-6A44-489F-826F-2952D5D31A0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInvoice.Cli", "AutoInvoice.Cli\AutoInvoice.Cli.csproj", "{2EC023FE-C16A-4803-BEAF-14A26F245D4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,10 +24,6 @@ Global
 		{05C95E35-BF53-4A9D-9263-FAF055FBC559}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05C95E35-BF53-4A9D-9263-FAF055FBC559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05C95E35-BF53-4A9D-9263-FAF055FBC559}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B68376E-F121-4A69-9722-49C4DC1B2CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B68376E-F121-4A69-9722-49C4DC1B2CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B68376E-F121-4A69-9722-49C4DC1B2CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B68376E-F121-4A69-9722-49C4DC1B2CDE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2FC9AEE-6BD7-470F-AF5E-698C2EA2D94B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D2FC9AEE-6BD7-470F-AF5E-698C2EA2D94B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2FC9AEE-6BD7-470F-AF5E-698C2EA2D94B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -36,5 +32,9 @@ Global
 		{60E02D12-6A44-489F-826F-2952D5D31A0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60E02D12-6A44-489F-826F-2952D5D31A0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60E02D12-6A44-489F-826F-2952D5D31A0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EC023FE-C16A-4803-BEAF-14A26F245D4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EC023FE-C16A-4803-BEAF-14A26F245D4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EC023FE-C16A-4803-BEAF-14A26F245D4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EC023FE-C16A-4803-BEAF-14A26F245D4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
